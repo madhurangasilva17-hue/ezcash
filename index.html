@@ -10,88 +10,163 @@
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:#f5f7fb;
+  background:#f4f6fb;
+  color:#111;
 }
 
-.container{ padding:15px; }
-
-.welcome{
-  background:#d9e6f2;
-  padding:20px;
-  border-radius:20px;
-  margin-bottom:15px;
+.container{
+  padding:16px;
 }
 
+/* HEADER */
+.header{
+  background:linear-gradient(135deg,#dce9f7,#c9dff5);
+  padding:22px;
+  border-radius:24px;
+  margin-bottom:18px;
+}
+
+.header h2{
+  margin:0;
+  font-size:22px;
+  font-weight:700;
+}
+
+.header p{
+  margin-top:6px;
+  font-size:14px;
+  color:#555;
+}
+
+/* SMALL CARDS */
 .row{
   display:flex;
-  gap:10px;
-  margin-bottom:15px;
+  gap:12px;
+  margin-bottom:18px;
 }
 
-.card-small{
+.small-card{
   flex:1;
   background:#fff;
-  padding:15px;
-  border-radius:18px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.05);
+  padding:18px;
+  border-radius:22px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
 }
 
-.value{
-  font-size:20px;
-  font-weight:bold;
-  margin-top:5px;
+.small-card span{
+  font-size:13px;
+  color:#777;
+}
+
+.amount{
+  margin-top:8px;
+  font-size:22px;
+  font-weight:700;
 }
 
 .blue{ color:#1e88e5; }
 .green{ color:#2e7d32; }
 
+/* BIG CARD */
 .card{
   background:#fff;
-  padding:15px;
-  border-radius:18px;
-  box-shadow:0 3px 10px rgba(0,0,0,0.05);
-  margin-bottom:15px;
+  padding:20px;
+  border-radius:22px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.05);
+  margin-bottom:18px;
 }
 
+.card h3{
+  margin:0;
+  font-size:18px;
+}
+
+.card p{
+  margin-top:6px;
+  font-size:14px;
+  color:#666;
+}
+
+/* PROGRESS */
 .progress{
-  height:6px;
-  background:#ddd;
-  border-radius:10px;
-  margin:10px 0;
+  height:8px;
+  background:#e0e0e0;
+  border-radius:12px;
+  margin:14px 0;
 }
 
 .progress-fill{
-  height:6px;
+  height:8px;
   background:#1e88e5;
-  border-radius:10px;
+  border-radius:12px;
   width:0%;
+  transition:0.3s;
 }
 
-.btn{
-  width:100%;
-  padding:10px;
-  border:none;
-  border-radius:10px;
-  background:#1e88e5;
-  color:white;
-  font-weight:bold;
-  margin-top:10px;
-  cursor:pointer;
-}
-
+/* BADGE */
 .badge{
   background:#e3f2fd;
   color:#1e88e5;
-  padding:5px 10px;
+  padding:6px 12px;
   border-radius:20px;
   font-size:12px;
   float:right;
+  font-weight:600;
 }
 
-.note{
-  font-size:13px;
-  margin-top:5px;
-  color:#777;
+/* LIST ITEMS */
+.list{
+  margin-top:10px;
+}
+
+.list-item{
+  background:#f2f4f8;
+  padding:14px;
+  border-radius:18px;
+  margin-top:10px;
+  font-size:14px;
+}
+
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:14px;
+  border:none;
+  border-radius:14px;
+  background:#1e88e5;
+  color:white;
+  font-weight:600;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.btn:hover{
+  background:#1565c0;
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#fff;
+  display:flex;
+  justify-content:space-around;
+  padding:12px 0;
+  box-shadow:0 -3px 15px rgba(0,0,0,0.08);
+}
+
+.nav-item{
+  text-align:center;
+  font-size:12px;
+  color:#666;
+}
+
+.nav-item.active{
+  color:#1e88e5;
+  font-weight:600;
 }
 </style>
 </head>
@@ -100,47 +175,57 @@ body{
 
 <div class="container">
 
-  <div class="welcome">
-    <h2 id="username">Welcome 👋</h2>
+  <div class="header">
+    <h2 id="username">Welcome Back 👋</h2>
     <p>Complete tasks to earn rewards</p>
   </div>
 
   <div class="row">
-    <div class="card-small">
-      <div>Total Earnings</div>
-      <div class="value blue" id="balance">0 LKR</div>
+    <div class="small-card">
+      <span>Total Earnings</span>
+      <div class="amount blue" id="balance">0.00 LKR</div>
     </div>
 
-    <div class="card-small">
-      <div>Referrals</div>
-      <div class="value green" id="referrals">0</div>
+    <div class="small-card">
+      <span>Referrals</span>
+      <div class="amount green" id="referrals">0</div>
     </div>
   </div>
 
   <div class="card">
     <h3>Daily Progress</h3>
+    <p>You can complete 30 ads today</p>
+
     <div class="progress">
       <div class="progress-fill" id="progBar"></div>
     </div>
+
     <p id="progressText">0 / 30 completed</p>
+
     <button class="btn" onclick="earn()">Watch Ad (+100 LKR)</button>
   </div>
 
   <div class="card">
-    <span class="badge">200 LKR / referral</span>
+    <span class="badge">Earn 200 LKR / referral</span>
     <h3>Refer & Earn</h3>
-    <p>Your Referral Link:</p>
-    <div id="refLinkBox" style="word-break:break-all;"></div>
-    <button class="btn" onclick="copyRef()">Copy Link</button>
+
+    <div class="list">
+      <div class="list-item">Friends get 150 LKR bonus</div>
+      <div class="list-item">You earn 200 LKR per referral</div>
+    </div>
+
+    <button class="btn" onclick="copyRef()">Copy Referral Link</button>
   </div>
 
-  <div class="card">
-    <h3>Withdraw</h3>
-    <input id="wdAmount" type="number" placeholder="Enter amount" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ccc;">
-    <p class="note" id="wdNote"></p>
-    <button class="btn" onclick="withdraw()">Request Withdraw</button>
-  </div>
+</div>
 
+<div style="height:80px"></div>
+
+<div class="bottom-nav">
+  <div class="nav-item active">Home</div>
+  <div class="nav-item">Task</div>
+  <div class="nav-item">Support</div>
+  <div class="nav-item">Withdraw</div>
 </div>
 
 <script>
@@ -148,96 +233,37 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const user = tg.initDataUnsafe?.user;
-const API_URL = "http://localhost:3000";
 
-let me = { balance:0, referrals:0, ads:0 };
-let dailyTotal = 30;
-
-function $(id){ return document.getElementById(id); }
-
-function tgAlert(text){
-  if(tg?.showAlert) tg.showAlert(text);
-  else alert(text);
+if(user){
+  document.getElementById("username").innerText =
+    "Welcome Back, " + user.first_name + " 👋";
 }
 
-function money(v){ return v + " LKR"; }
+let ads = 0;
+let balance = 0;
 
-async function loadMe(){
-  if(!user?.id) return;
-
-  const res = await fetch(API_URL + "/user/" + user.id);
-  me = await res.json();
-
-  $("username").innerText = "Welcome Back, " + user.first_name + " 👋";
-  $("balance").innerText = money(me.balance);
-  $("referrals").innerText = me.referrals || 0;
-  $("refLinkBox").innerText =
-    "https://t.me/YOUR_BOT_USERNAME?start=" + user.id;
-
-  updateWithdrawNote();
-  renderProgress();
-}
-
-function renderProgress(){
-  const pct = Math.min(100, (me.ads / dailyTotal) * 100);
-  $("progBar").style.width = pct + "%";
-  $("progressText").innerText =
-    me.ads + " / " + dailyTotal + " completed";
-}
-
-function updateWithdrawNote(){
-  if((me.referrals || 0) >= 15)
-    $("wdNote").innerText =
-      "✅ You can request withdrawal";
-  else
-    $("wdNote").innerText =
-      "⚠ Need at least 15 referrals";
-}
-
-async function earn(){
-  if(me.ads >= dailyTotal)
-    return tgAlert("Daily limit reached");
-
-  const res = await fetch(API_URL + "/watch-ad",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ userId:user.id })
-  });
-
-  me = await res.json();
-  $("balance").innerText = money(me.balance);
-  renderProgress();
-}
-
-async function withdraw(){
-  const amount = Number($("wdAmount").value);
-  if(!amount) return tgAlert("Enter amount");
-
-  if(me.referrals < 15)
-    return tgAlert("Need 15 referrals");
-
-  const res = await fetch(API_URL + "/withdraw",{
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ userId:user.id, amount })
-  });
-
-  const data = await res.json();
-  if(data.ok){
-    me.balance = data.balance;
-    $("balance").innerText = money(me.balance);
-    tgAlert("Withdraw requested");
-  } else {
-    tgAlert(data.error || "Error");
+function earn(){
+  if(ads >= 30){
+    alert("Daily limit reached");
+    return;
   }
+
+  ads++;
+  balance += 100;
+
+  document.getElementById("balance").innerText =
+    balance + ".00 LKR";
+
+  document.getElementById("progBar").style.width =
+    (ads/30*100)+"%";
+
+  document.getElementById("progressText").innerText =
+    ads + " / 30 completed";
 }
 
 function copyRef(){
-  navigator.clipboard.writeText($("refLinkBox").innerText);
-  tgAlert("Copied");
+  alert("Referral copied");
 }
-
-loadMe();
 </script>
 
 </body>

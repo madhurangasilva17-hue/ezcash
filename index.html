@@ -6,7 +6,6 @@
 <title>EzCash</title>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.adsgram.ai/js/adsgram.min.js"></script>
 
 <style>
 body{margin:0;font-family:Arial;background:#f4f6fb;}
@@ -30,7 +29,7 @@ body{margin:0;font-family:Arial;background:#f4f6fb;}
   </div>
 
   <div class="card">
-    <button class="btn" onclick="earn()">Watch Ad (+100)</button>
+    <button class="btn" onclick="earn()">Watch Ad (+100 LKR)</button>
   </div>
 
   <div class="card">
@@ -44,10 +43,24 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const API_URL = "https://ezcash-1.onrender.com";
-const ADSGRAM_BLOCK_ID = "23197"; // ← Replace with your real block ID
+const ADSGRAM_BLOCK_ID = "23197"; // 🔴 Put your real block ID
 
 let user = tg.initDataUnsafe?.user;
 let me = { balance:0 };
+
+// Dynamic AdsGram loader
+(function () {
+  const s = document.createElement("script");
+  s.src = "https://adsgram.ai/sdk.js";
+  s.async = true;
+  s.onload = function () {
+    console.log("AdsGram Loaded");
+  };
+  s.onerror = function () {
+    console.log("AdsGram failed to load");
+  };
+  document.head.appendChild(s);
+})();
 
 window.onload = async function(){
 
@@ -71,8 +84,8 @@ async function loadUser(){
 
 async function earn(){
 
-  if (!window.Adsgram) {
-    alert("AdsGram not loaded");
+  if (!window.Adsgram || !window.Adsgram.showRewarded) {
+    alert("Ads not ready yet");
     return;
   }
 
@@ -91,6 +104,7 @@ async function earn(){
 
 function copyRef(){
   const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
+
   navigator.clipboard.writeText(link)
     .then(()=> alert("Copied ✅"))
     .catch(()=> alert(link));

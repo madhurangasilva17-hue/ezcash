@@ -84,22 +84,28 @@ async function loadUser(){
 
 async function earn(){
 
-  if (!window.Adsgram || !window.Adsgram.showRewarded) {
-    alert("Ads not ready yet");
+  if((me.ads || 0) >= 30){
+    alert("Daily limit reached");
     return;
   }
 
-  try {
-    await window.Adsgram.showRewarded({
-      blockId: ADSGRAM_BLOCK_ID,
-      userId: String(user.id)
-    });
+  const adUrl = "https://www.effectivegatecpm.com/axeeyqg3tf?key=b80fe1d68675c8ba9e9127836a0c430b";
 
-    setTimeout(loadUser, 2000);
+  // Open the Smartlink ad
+  window.open(adUrl, "_blank");
 
-  } catch(e){
-    alert("Ad not completed");
-  }
+  // Reward after 15 seconds
+  setTimeout(async () => {
+
+    try {
+      await fetch(API_URL + "/reward?userid=" + user.id);
+      await loadUser();
+      alert("Reward Added ✅");
+    } catch(e) {
+      alert("Reward error ❌");
+    }
+
+  }, 15000); // wait 15 seconds
 }
 
 function copyRef(){

@@ -1,11 +1,31 @@
 const express = require("express");
 const cors = require("cors");
+const TelegramBot = require("node-telegram-bot-api");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w";
+const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/";
+
+const bot = new TelegramBot(TOKEN, { polling: true });
+
 let users = {};
+
+// Telegram /start
+bot.onText(/\/start/, (msg) => {
+
+  const chatId = msg.chat.id;
+
+  bot.sendMessage(chatId, "Welcome to EzCash 💰", {
+    reply_markup: {
+      inline_keyboard: [[
+        { text: "Open EzCash", web_app: { url: WEBAPP_URL } }
+      ]]
+    }
+  });
+});
 
 // Get user data
 app.get("/user/:id", (req, res) => {
@@ -18,13 +38,9 @@ app.get("/user/:id", (req, res) => {
   res.json(users[userId]);
 });
 
-// AdsGram Reward Callback
+// Reward callback
 app.get("/reward", (req, res) => {
-  const userId = req.query.userid; // MUST match AdsGram
-
-  if (!userId) {
-    return res.status(400).json({ error: "No userId" });
-  }
+  const userId = req.query.userid;
 
   if (!users[userId]) {
     users[userId] = { balance: 0, ads: 0, referrals: 0 };

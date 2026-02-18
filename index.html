@@ -208,24 +208,7 @@ function updateUI(){
 }
 
 async function earn(){
-
-  if (!window.Adsgram) {
-    alert("AdsGram not loaded");
-    return;
-  }
-
-  try {
-
-    await window.Adsgram.showRewarded({
-      blockId: "23197",
-      userId: String(user.id)
-    });
-
-    setTimeout(loadUser, 2000);
-
-  } catch(e){
-    alert("Ad not completed");
-  }
+  alert("Button clicked");
 }
 
 function copyRef(){

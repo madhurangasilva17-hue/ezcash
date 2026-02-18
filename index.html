@@ -220,30 +220,21 @@ body{
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-let user = null;
+let user = tg.initDataUnsafe?.user || null;
 let ads = 0;
 let balance = 0;
 
-window.onload = function(){
-
-  user = tg.initDataUnsafe?.user;
+window.addEventListener("DOMContentLoaded", function(){
 
   if(user){
-
-    const nameEl = document.getElementById("username");
-    if(nameEl){
-      nameEl.innerText = "Welcome Back, " + user.first_name + " 👋";
+    const usernameEl = document.getElementById("username");
+    if(usernameEl){
+      usernameEl.innerText =
+        "Welcome Back, " + user.first_name + " 👋";
     }
-
-    const refBox = document.getElementById("refLinkBox");
-    if(refBox){
-      refBox.innerText =
-        "https://t.me/ezcash_lk_bot?start=" + user.id;
-    }
-
   }
 
-};
+});
 
 function earn(){
 
@@ -255,13 +246,15 @@ function earn(){
   ads++;
   balance += 100;
 
-  const bal = document.getElementById("balance");
-  const bar = document.getElementById("progBar");
-  const txt = document.getElementById("progressText");
+  document.getElementById("balance").innerText =
+    balance.toFixed(2) + " LKR";
 
-  if(bal) bal.innerText = balance + ".00 LKR";
-  if(bar) bar.style.width = (ads/30*100) + "%";
-  if(txt) txt.innerText = ads + " / 30 completed";
+  document.getElementById("progBar").style.width =
+    (ads / 30 * 100) + "%";
+
+  document.getElementById("progressText").innerText =
+    ads + " / 30 completed";
+
 }
 
 function copyRef(){
@@ -274,13 +267,13 @@ function copyRef(){
   const link =
     "https://t.me/ezcash_lk_bot?start=" + user.id;
 
-  tg.openTelegramLink(
-    "https://t.me/share/url?url=" +
-    encodeURIComponent(link)
-  );
+  navigator.clipboard.writeText(link)
+    .then(() => alert("Referral Link Copied ✅"))
+    .catch(() => alert("Copy failed ❌"));
 
 }
 </script>
+
 
 </body>
 </html>

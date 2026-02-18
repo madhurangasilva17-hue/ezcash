@@ -266,28 +266,14 @@ function earn(){
 function copyRef(){
   const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
 
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(link)
-      .then(()=>tg.showAlert("Referral link copied ✅"))
-      .catch(()=>fallbackCopy(link));
+  if (tg && tg.openTelegramLink) {
+    tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(link));
   } else {
-    fallbackCopy(link);
+    window.open("https://t.me/share/url?url=" + encodeURIComponent(link));
   }
 }
 
-function fallbackCopy(text){
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.style.position = "fixed";
-  textarea.style.left = "-9999px";
-  document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
-  tg.showAlert("Referral link copied ✅");
-}
-}
+
 </script>
 
 </body>

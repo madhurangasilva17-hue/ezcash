@@ -161,8 +161,10 @@ body{
 </div>
 
 <script>
+
 const tg = window.Telegram.WebApp;
 tg.expand();
+console.log("Script loaded");
 
 const API_URL = "https://ezcash-1.onrender.com";
 const ADSGRAM_BLOCK_ID = "23197"; // ← මෙතන block ID දාන්න
@@ -170,7 +172,8 @@ const ADSGRAM_BLOCK_ID = "23197"; // ← මෙතන block ID දාන්න
 let user = tg.initDataUnsafe?.user || null;
 let me = { balance:0, ads:0, referrals:0 };
 
-document.addEventListener("DOMContentLoaded", async () => {
+window.onload = async function() {
+
 
   if(!user){
     alert("Open inside Telegram");

@@ -6,15 +6,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w"; // ← BotFather token
-const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=30";
-
+const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w"; // 🔴 Put BotFather token here
+const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=100";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 
 let users = {};
 
-// BOT START
+// Telegram start
 bot.onText(/\/start/, (msg) => {
   bot.sendMessage(msg.chat.id, "Welcome to EzCash 💰", {
     reply_markup: {
@@ -25,7 +24,7 @@ bot.onText(/\/start/, (msg) => {
   });
 });
 
-// GET USER
+// Get user data
 app.get("/user/:id", (req, res) => {
   const userId = req.params.id;
 
@@ -36,7 +35,7 @@ app.get("/user/:id", (req, res) => {
   res.json(users[userId]);
 });
 
-// ADSGRAM REWARD CALLBACK
+// AdsGram reward callback
 app.get("/reward", (req, res) => {
   const userId = req.query.userid;
 
@@ -53,6 +52,7 @@ app.get("/reward", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });

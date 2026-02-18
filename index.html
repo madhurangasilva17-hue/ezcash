@@ -209,11 +209,6 @@ function updateUI(){
 
 async function earn(){
 
-  if((me.ads || 0) >= 30){
-    alert("Daily limit reached");
-    return;
-  }
-
   if (!window.Adsgram) {
     alert("AdsGram not loaded");
     return;
@@ -222,12 +217,10 @@ async function earn(){
   try {
 
     await window.Adsgram.showRewarded({
-      blockId: ADSGRAM_BLOCK_ID,
+      blockId: "23197",
       userId: String(user.id)
     });
 
-    // Reward callback from AdsGram will hit backend
-    // So wait 2 seconds and reload user data
     setTimeout(loadUser, 2000);
 
   } catch(e){

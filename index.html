@@ -1,53 +1,188 @@
-const TelegramBot = require("node-telegram-bot-api");
-const express = require("express");
-const cors = require("cors");
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EzCash</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-const token = "PASTE_NEW_BOT_TOKEN_HERE";
-const WEBAPP_URL = "https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO_NAME/";
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#f4f6fb;
+}
 
-const bot = new TelegramBot(token, { polling: true });
+.header{
+  background:#dbe7f3;
+  padding:20px;
+  border-radius:0 0 25px 25px;
+}
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+.header h2{
+  margin:0;
+}
 
-let users = {};
+.cards{
+  display:flex;
+  gap:10px;
+  margin:15px;
+}
 
-bot.onText(/\/start(?: (.+))?/, (msg, match) => {
-  const userId = msg.from.id;
-  const refId = match[1];
+.card{
+  flex:1;
+  background:white;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.08);
+}
 
-  if (!users[userId]) {
-    users[userId] = { balance: 0, referrals: 0, ads: 0 };
+.big-card{
+  background:white;
+  margin:15px;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 3px 8px rgba(0,0,0,0.08);
+}
 
-    if (refId && refId != userId && users[refId]) {
-      users[refId].balance += 200;
-      users[refId].referrals += 1;
-    }
+.amount{
+  font-size:22px;
+  font-weight:bold;
+  color:#2196f3;
+}
+
+.progress-bar{
+  height:8px;
+  background:#ddd;
+  border-radius:10px;
+  margin-top:10px;
+}
+
+.progress-fill{
+  height:8px;
+  background:#2196f3;
+  border-radius:10px;
+  width:0%;
+}
+
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.blue{background:#2196f3;color:white;}
+.green{background:#4caf50;color:white;}
+
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:white;
+  display:flex;
+  justify-content:space-around;
+  padding:10px 0;
+  box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-item{
+  font-size:12px;
+  color:#555;
+  text-align:center;
+}
+
+.nav-item.active{
+  color:#2196f3;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2 id="username">සාදරයෙන් පිළිගනිමු 👋</h2>
+  <p>කාර්යයන් සම්පූර්ණ කර මුදල් උපයන්න</p>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div>මුළු උපයාගත් මුදල</div>
+    <div class="amount" id="balance">0.00 LKR</div>
+  </div>
+
+  <div class="card">
+    <div>මිතුරන්</div>
+    <div class="amount" id="referrals">0</div>
+  </div>
+</div>
+
+<div class="big-card">
+  <h3>📊 දිනපතා ප්‍රගතිය</h3>
+  <p>අද දැන්වීම් 30ක් සම්පූර්ණ කළ හැක</p>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress"></div>
+  </div>
+  <p id="progressText">0 / 30 සම්පූර්ණයි</p>
+  <button class="btn green" onclick="watchAd()">දැන්වීම බලන්න (+100 LKR)</button>
+</div>
+
+<div class="big-card">
+  <h3>👥 මිතුරන්ට ආරාධනා කරන්න</h3>
+  <p>එක් මිතුරෙකුට 200 LKR</p>
+  <button class="btn blue" onclick="copyReferral()">Referral Link Copy කරන්න</button>
+</div>
+
+<div style="height:80px"></div>
+
+<div class="bottom-nav">
+  <div class="nav-item active">🏠 මුල් පිටුව</div>
+  <div class="nav-item">📋 කාර්ය</div>
+  <div class="nav-item">🎧 සහාය</div>
+  <div class="nav-item">💳 Withdraw</div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+const user = tg.initDataUnsafe?.user;
+const userId = user?.id;
+
+if(user){
+  document.getElementById("username").innerText =
+    user.first_name + " වෙත සාදරයෙන් පිළිගනිමු 👋";
+}
+
+let balance = 0;
+let adsToday = 0;
+let referrals = 0;
+
+async function watchAd(){
+  if(adsToday >= 30){
+    alert("අද සඳහා දැන්වීම් සීමාව සම්පූර්ණයි");
+    return;
   }
 
-  bot.sendMessage(msg.chat.id, "EzCash වෙත සාදරයෙන් පිළිගනිමු 💰", {
-    reply_markup: {
-      inline_keyboard: [[
-        { text: "ඇප් එක විවෘත කරන්න", web_app: { url: WEBAPP_URL } }
-      ]]
-    }
-  });
-});
+  adsToday++;
+  balance += 100;
 
-app.post("/watch-ad", (req, res) => {
-  const { userId } = req.body;
-  if (!users[userId]) return res.json({ error: "User not found" });
+  document.getElementById("balance").innerText = balance + " LKR";
+  document.getElementById("progress").style.width = (adsToday/30*100)+"%";
+  document.getElementById("progressText").innerText =
+    adsToday + " / 30 සම්පූර්ණයි";
+}
 
-  if (users[userId].ads >= 30)
-    return res.json({ error: "අද දැන්වීම් සීමාව සම්පූර්ණයි" });
+function copyReferral(){
+  const link="https://t.me/YOUR_BOT_USERNAME?start="+userId;
+  navigator.clipboard.writeText(link);
+  alert("Referral link copy වුණා!");
+}
+</script>
 
-  users[userId].balance += 100;
-  users[userId].ads += 1;
-
-  res.json({ balance: users[userId].balance });
-});
-
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
-});
+</body>
+</html>

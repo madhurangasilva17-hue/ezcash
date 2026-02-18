@@ -2,105 +2,17 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EzCash</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="https://cdn.adsgram.ai/js/adsgram.min.js"></script>
 
-
 <style>
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-  background:#f4f6fb;
-  color:#111;
-}
-.container{ padding:16px; }
-
-.header{
-  background:linear-gradient(135deg,#dce9f7,#c9dff5);
-  padding:22px;
-  border-radius:24px;
-  margin-bottom:18px;
-}
-
-.header h2{ margin:0; font-size:22px; }
-.header p{ margin-top:6px; font-size:14px; color:#555; }
-
-.row{ display:flex; gap:12px; margin-bottom:18px; }
-
-.small-card{
-  flex:1;
-  background:#fff;
-  padding:18px;
-  border-radius:22px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
-}
-
-.small-card span{ font-size:13px; color:#777; }
-
-.amount{ margin-top:8px; font-size:22px; font-weight:700; }
-.blue{ color:#1e88e5; }
-.green{ color:#2e7d32; }
-
-.card{
-  background:#fff;
-  padding:20px;
-  border-radius:22px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.05);
-  margin-bottom:18px;
-}
-
-.progress{
-  height:8px;
-  background:#e0e0e0;
-  border-radius:12px;
-  margin:14px 0;
-}
-
-.progress-fill{
-  height:8px;
-  background:#1e88e5;
-  border-radius:12px;
-  width:0%;
-}
-
-.btn{
-  width:100%;
-  padding:12px;
-  margin-top:14px;
-  border:none;
-  border-radius:14px;
-  background:#1e88e5;
-  color:white;
-  font-weight:600;
-  font-size:15px;
-  cursor:pointer;
-}
-
-.list-item{
-  background:#f2f4f8;
-  padding:14px;
-  border-radius:18px;
-  margin-top:10px;
-  font-size:14px;
-}
-
-.bottom-nav{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#fff;
-  display:flex;
-  justify-content:space-around;
-  padding:12px 0;
-  box-shadow:0 -3px 15px rgba(0,0,0,0.08);
-}
-.nav-item{ font-size:12px; color:#666; }
-.nav-item.active{ color:#1e88e5; font-weight:600; }
+body{margin:0;font-family:Arial;background:#f4f6fb;}
+.container{padding:16px;}
+.card{background:#fff;padding:20px;border-radius:16px;margin-bottom:16px;}
+.btn{width:100%;padding:12px;border:none;border-radius:12px;background:#1e88e5;color:#fff;font-weight:bold;cursor:pointer;}
 </style>
 </head>
 
@@ -108,72 +20,36 @@ body{
 
 <div class="container">
 
-  <div class="header">
-    <h2 id="username">Welcome 👋</h2>
-    <p>Complete tasks to earn rewards</p>
-  </div>
-
-  <div class="row">
-    <div class="small-card">
-      <span>Total Earnings</span>
-      <div class="amount blue" id="balance">0.00 LKR</div>
-    </div>
-
-    <div class="small-card">
-      <span>Referrals</span>
-      <div class="amount green" id="referrals">0</div>
-    </div>
-  </div>
-
-  <!-- DAILY PROGRESS -->
   <div class="card">
-    <h3>Daily Progress</h3>
-    <p>You can complete 30 ads today</p>
-
-    <div class="progress">
-      <div class="progress-fill" id="progBar"></div>
-    </div>
-
-    <p id="progressText">0 / 30 completed</p>
-
-    <button class="btn" id="watchBtn">Watch Ad (+100 LKR)</button>
+    <h3 id="username">Welcome</h3>
   </div>
 
-  <!-- REFERRAL -->
   <div class="card">
-    <h3>Refer & Earn</h3>
+    <h3>Total Earnings</h3>
+    <div id="balance">0.00 LKR</div>
+  </div>
 
-    <div class="list-item">Friends get 150 LKR bonus</div>
-    <div class="list-item">You earn 200 LKR per referral</div>
+  <div class="card">
+    <button class="btn" onclick="earn()">Watch Ad (+100)</button>
+  </div>
 
+  <div class="card">
     <button class="btn" onclick="copyRef()">Copy Referral Link</button>
   </div>
 
 </div>
 
-<div style="height:80px"></div>
-
-<div class="bottom-nav">
-  <div class="nav-item active">Home</div>
-  <div class="nav-item">Task</div>
-  <div class="nav-item">Support</div>
-  <div class="nav-item">Withdraw</div>
-</div>
-
 <script>
-
 const tg = window.Telegram.WebApp;
 tg.expand();
-console.log("Script loaded");
 
 const API_URL = "https://ezcash-1.onrender.com";
-const ADSGRAM_BLOCK_ID = "23197"; // ← මෙතන block ID දාන්න
+const ADSGRAM_BLOCK_ID = "23197"; // ← Replace with your real block ID
 
-let user = tg.initDataUnsafe?.user || null;
-let me = { balance:0, ads:0, referrals:0 };
+let user = tg.initDataUnsafe?.user;
+let me = { balance:0 };
 
-window.onload = async function() {
-
+window.onload = async function(){
 
   if(!user){
     alert("Open inside Telegram");
@@ -181,40 +57,43 @@ window.onload = async function() {
   }
 
   document.getElementById("username").innerText =
-    "Welcome Back, " + user.first_name + " 👋";
+    "Welcome, " + user.first_name;
 
-  await loadUser();
-
-  document.getElementById("watchBtn")
-    .addEventListener("click", earn);
-});
+  loadUser();
+};
 
 async function loadUser(){
-  try{
-    const res = await fetch(API_URL + "/user/" + user.id);
-    me = await res.json();
-    updateUI();
-  } catch(e){
-    alert("Server not responding");
-  }
-}
-
-function updateUI(){
+  const res = await fetch(API_URL + "/user/" + user.id);
+  me = await res.json();
   document.getElementById("balance").innerText =
-    (me.balance || 0).toFixed(2) + " LKR";
-
-  document.getElementById("referrals").innerText =
-    me.referrals || 0;
-
-  document.getElementById("progBar").style.width =
-    ((me.ads || 0)/30*100) + "%";
-
-  document.getElementById("progressText").innerText =
-    (me.ads || 0) + " / 30 completed";
+    me.balance.toFixed(2) + " LKR";
 }
 
 async function earn(){
-  alert("WORKING");
+
+  if (!window.Adsgram) {
+    alert("AdsGram not loaded");
+    return;
+  }
+
+  try {
+    await window.Adsgram.showRewarded({
+      blockId: ADSGRAM_BLOCK_ID,
+      userId: String(user.id)
+    });
+
+    setTimeout(loadUser, 2000);
+
+  } catch(e){
+    alert("Ad not completed");
+  }
+}
+
+function copyRef(){
+  const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
+  navigator.clipboard.writeText(link)
+    .then(()=> alert("Copied ✅"))
+    .catch(()=> alert(link));
 }
 </script>
 

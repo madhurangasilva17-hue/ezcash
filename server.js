@@ -6,20 +6,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w";
-const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=2";
-
+const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w"; // ← BotFather token
+const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=20";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 
 let users = {};
 
-// Telegram /start
+// BOT START
 bot.onText(/\/start/, (msg) => {
-
-  const chatId = msg.chat.id;
-
-  bot.sendMessage(chatId, "Welcome to EzCash 💰", {
+  bot.sendMessage(msg.chat.id, "Welcome to EzCash 💰", {
     reply_markup: {
       inline_keyboard: [[
         { text: "Open EzCash", web_app: { url: WEBAPP_URL } }
@@ -28,7 +24,7 @@ bot.onText(/\/start/, (msg) => {
   });
 });
 
-// Get user data
+// GET USER
 app.get("/user/:id", (req, res) => {
   const userId = req.params.id;
 
@@ -39,7 +35,7 @@ app.get("/user/:id", (req, res) => {
   res.json(users[userId]);
 });
 
-// Reward callback
+// ADSGRAM REWARD CALLBACK
 app.get("/reward", (req, res) => {
   const userId = req.query.userid;
 
@@ -50,13 +46,12 @@ app.get("/reward", (req, res) => {
   users[userId].balance += 100;
   users[userId].ads += 1;
 
-  console.log("Reward added to:", userId);
+  console.log("Reward added:", userId);
 
   res.json({ ok: true });
 });
 
 const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
   console.log("Server running on port " + PORT);
 });

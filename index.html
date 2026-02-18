@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EzCash</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.adsgram.ai/js/adsgram.min.js"></script>
+
 
 <style>
 body{
@@ -160,6 +162,7 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const API_URL = "https://ezcash-1.onrender.com";
+const ADSGRAM_BLOCK_ID = "23197"; // ← මෙතන block ID දාන්න
 
 let user = tg.initDataUnsafe?.user || null;
 let me = { balance:0, ads:0, referrals:0 };
@@ -178,14 +181,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   document.getElementById("watchBtn")
     .addEventListener("click", earn);
-
 });
 
 async function loadUser(){
   try{
     const res = await fetch(API_URL + "/user/" + user.id);
     me = await res.json();
-
     updateUI();
   } catch(e){
     alert("Server not responding");
@@ -213,22 +214,24 @@ async function earn(){
     return;
   }
 
-  try{
-    const res = await fetch(API_URL + "/watch-ad",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ userId: user.id })
+  if (!window.Adsgram) {
+    alert("AdsGram not loaded");
+    return;
+  }
+
+  try {
+
+    await window.Adsgram.showRewarded({
+      blockId: ADSGRAM_BLOCK_ID,
+      userId: String(user.id)
     });
 
-    const data = await res.json();
-
-    me.balance = data.balance;
-    me.ads += 1;
-
-    updateUI();
+    // Reward callback from AdsGram will hit backend
+    // So wait 2 seconds and reload user data
+    setTimeout(loadUser, 2000);
 
   } catch(e){
-    alert("Network error");
+    alert("Ad not completed");
   }
 }
 

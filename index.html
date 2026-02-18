@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EzCash</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+<h2>EzCash 💰</h2>
+<button onclick="watchAd()">Watch Ad (100 LKR)</button>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+const userId = tg.initDataUnsafe.user.id;
+
+async function watchAd() {
+  const res = await fetch("http://localhost:3000/watch-ad", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId })
+  });
+
+  const data = await res.json();
+  alert(JSON.stringify(data));
+}
+</script>
+
+</body>
+</html>

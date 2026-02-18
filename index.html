@@ -235,9 +235,9 @@ tg.expand();
 const user = tg.initDataUnsafe?.user;
 
 if(user){
- document.getElementById("refLinkBox").innerText =
-  "https://t.me/https://t.me/ezcashsrilanka_bot?start=123456789
-=" + user.id;
+document.getElementById("refLinkBox").innerText =
+  "https://t.me/ezcash_lk_bot?start=" + user.id;
+
 
 }
 
@@ -264,7 +264,29 @@ function earn(){
 }
 
 function copyRef(){
-  alert("Referral copied");
+  const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(link)
+      .then(()=>tg.showAlert("Referral link copied ✅"))
+      .catch(()=>fallbackCopy(link));
+  } else {
+    fallbackCopy(link);
+  }
+}
+
+function fallbackCopy(text){
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+  tg.showAlert("Referral link copied ✅");
+}
 }
 </script>
 

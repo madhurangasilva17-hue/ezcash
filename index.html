@@ -220,21 +220,33 @@ body{
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const user = tg.initDataUnsafe?.user;
-
-if(user){
-  document.getElementById("username").innerText =
-    "Welcome Back, " + user.first_name + " 👋";
-
-  document.getElementById("refLinkBox").innerText =
-    "https://t.me/ezcash_lk_bot?start=" + user.id;
-}
-
-
+let user = null;
 let ads = 0;
 let balance = 0;
 
+window.onload = function(){
+
+  user = tg.initDataUnsafe?.user;
+
+  if(user){
+
+    const nameEl = document.getElementById("username");
+    if(nameEl){
+      nameEl.innerText = "Welcome Back, " + user.first_name + " 👋";
+    }
+
+    const refBox = document.getElementById("refLinkBox");
+    if(refBox){
+      refBox.innerText =
+        "https://t.me/ezcash_lk_bot?start=" + user.id;
+    }
+
+  }
+
+};
+
 function earn(){
+
   if(ads >= 30){
     alert("Daily limit reached");
     return;
@@ -243,27 +255,31 @@ function earn(){
   ads++;
   balance += 100;
 
-  document.getElementById("balance").innerText =
-    balance + ".00 LKR";
+  const bal = document.getElementById("balance");
+  const bar = document.getElementById("progBar");
+  const txt = document.getElementById("progressText");
 
-  document.getElementById("progBar").style.width =
-    (ads/30*100)+"%";
-
-  document.getElementById("progressText").innerText =
-    ads + " / 30 completed";
+  if(bal) bal.innerText = balance + ".00 LKR";
+  if(bar) bar.style.width = (ads/30*100) + "%";
+  if(txt) txt.innerText = ads + " / 30 completed";
 }
 
 function copyRef(){
-  const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
 
-  if (tg && tg.openTelegramLink) {
-    tg.openTelegramLink("https://t.me/share/url?url=" + encodeURIComponent(link));
-  } else {
-    window.open("https://t.me/share/url?url=" + encodeURIComponent(link));
+  if(!user){
+    alert("Open inside Telegram");
+    return;
   }
+
+  const link =
+    "https://t.me/ezcash_lk_bot?start=" + user.id;
+
+  tg.openTelegramLink(
+    "https://t.me/share/url?url=" +
+    encodeURIComponent(link)
+  );
+
 }
-
-
 </script>
 
 </body>

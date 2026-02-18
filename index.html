@@ -193,18 +193,18 @@ body{
   </div>
 
   <div class="card">
-  <span class="badge">Earn 200 LKR / referral</span>
-  <h3>Refer & Earn</h3>
+  <h3>Daily Progress</h3>
+  <p>You can complete 30 ads today</p>
 
-  <div class="list">
-    <div class="list-item">Friends get 150 LKR bonus</div>
-    <div class="list-item">You earn 200 LKR per referral</div>
+  <div class="progress">
+    <div class="progress-fill" id="progBar"></div>
   </div>
 
-  <div id="refLinkBox" style="margin-top:10px;font-size:13px;color:#555;word-break:break-all;"></div>
+  <p id="progressText">0 / 30 completed</p>
 
-  <button class="btn" onclick="copyRef()">Copy Referral Link</button>
+  <button class="btn" id="watchBtn">Watch Ad (+100 LKR)</button>
 </div>
+
 
 
 <div style="height:80px"></div>
@@ -224,14 +224,17 @@ let user = tg.initDataUnsafe?.user || null;
 let ads = 0;
 let balance = 0;
 
-window.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", () => {
 
   if(user){
-    const usernameEl = document.getElementById("username");
-    if(usernameEl){
-      usernameEl.innerText =
-        "Welcome Back, " + user.first_name + " 👋";
-    }
+    document.getElementById("username").innerText =
+      "Welcome Back, " + user.first_name + " 👋";
+  }
+
+  const watchBtn = document.getElementById("watchBtn");
+
+  if(watchBtn){
+    watchBtn.addEventListener("click", earn);
   }
 
 });
@@ -250,7 +253,7 @@ function earn(){
     balance.toFixed(2) + " LKR";
 
   document.getElementById("progBar").style.width =
-    (ads / 30 * 100) + "%";
+    (ads/30*100) + "%";
 
   document.getElementById("progressText").innerText =
     ads + " / 30 completed";
@@ -260,7 +263,7 @@ function earn(){
 function copyRef(){
 
   if(!user){
-    alert("Open inside Telegram app");
+    alert("Open inside Telegram");
     return;
   }
 

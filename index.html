@@ -193,31 +193,19 @@ body{
   </div>
 
   <div class="card">
-    <h3>Daily Progress</h3>
-    <p>You can complete 30 ads today</p>
+  <span class="badge">Earn 200 LKR / referral</span>
+  <h3>Refer & Earn</h3>
 
-    <div class="progress">
-      <div class="progress-fill" id="progBar"></div>
-    </div>
-
-    <p id="progressText">0 / 30 completed</p>
-
-    <button class="btn" onclick="earn()">Watch Ad (+100 LKR)</button>
+  <div class="list">
+    <div class="list-item">Friends get 150 LKR bonus</div>
+    <div class="list-item">You earn 200 LKR per referral</div>
   </div>
 
-  <div class="card">
-    <span class="badge">Earn 200 LKR / referral</span>
-    <h3>Refer & Earn</h3>
+  <div id="refLinkBox" style="margin-top:10px;font-size:13px;color:#555;word-break:break-all;"></div>
 
-    <div class="list">
-      <div class="list-item">Friends get 150 LKR bonus</div>
-      <div class="list-item">You earn 200 LKR per referral</div>
-    </div>
-
-    <button class="btn" onclick="copyRef()">Copy Referral Link</button>
-  </div>
-
+  <button class="btn" onclick="copyRef()">Copy Referral Link</button>
 </div>
+
 
 <div style="height:80px"></div>
 
@@ -235,11 +223,13 @@ tg.expand();
 const user = tg.initDataUnsafe?.user;
 
 if(user){
-document.getElementById("refLinkBox").innerText =
-  "https://t.me/ezcash_lk_bot?start=" + user.id;
+  document.getElementById("username").innerText =
+    "Welcome Back, " + user.first_name + " 👋";
 
-
+  document.getElementById("refLinkBox").innerText =
+    "https://t.me/ezcash_lk_bot?start=" + user.id;
 }
+
 
 let ads = 0;
 let balance = 0;

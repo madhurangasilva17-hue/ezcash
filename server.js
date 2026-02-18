@@ -7,7 +7,8 @@ app.use(cors());
 app.use(express.json());
 
 const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w"; // ← BotFather token
-const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=20";
+const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=30";
+
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 

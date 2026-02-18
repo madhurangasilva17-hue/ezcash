@@ -1,29 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
-  <title>EzCash</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EzCash</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: white;
+  text-align: center;
+}
+
+.header {
+  padding: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  margin: 15px;
+  padding: 20px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.balance {
+  font-size: 28px;
+  margin-top: 10px;
+  font-weight: bold;
+  color: #00ffcc;
+}
+
+button {
+  width: 90%;
+  padding: 15px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ad-btn {
+  background: #00c853;
+  color: white;
+}
+
+.withdraw-btn {
+  background: #ff1744;
+  color: white;
+}
+
+.ref-btn {
+  background: #2979ff;
+  color: white;
+}
+
+.footer {
+  margin-top: 20px;
+  font-size: 13px;
+  opacity: 0.8;
+}
+</style>
 </head>
+
 <body>
 
-<h2>EzCash 💰</h2>
-<button onclick="watchAd()">Watch Ad (100 LKR)</button>
+<div class="header">💰 EzCash</div>
+
+<div class="card">
+  <div>ඔබගේ මුදල් ශේෂය</div>
+  <div class="balance" id="balance">0 LKR</div>
+</div>
+
+<div class="card">
+  <button class="ad-btn" onclick="watchAd()">🎥 දැන් දැන්වීමක් බලන්න (+100 LKR)</button>
+  <button class="ref-btn" onclick="copyReferral()">👥 මිතුරන්ට බෙදාගන්න</button>
+  <button class="withdraw-btn" onclick="withdraw()">💸 මුදල් ඉල්ලන්න</button>
+</div>
+
+<div class="footer">
+  දිනකට දැන්වීම් 30 ක් පමණයි | 15 මිතුරන්ට පසු මුදල් ඉල්ලිය හැක
+</div>
 
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
 
 const userId = tg.initDataUnsafe.user.id;
+let balance = 0;
 
 async function watchAd() {
-  const res = await fetch("http://localhost:3000/watch-ad", {
+  const res = await fetch("https://https://ezcash.onrender.com/watch-ad", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId })
   });
 
   const data = await res.json();
-  alert(JSON.stringify(data));
+
+  if (data.error) {
+    alert(data.error);
+  } else {
+    balance = data.balance;
+    document.getElementById("balance").innerText = balance + " LKR";
+    alert("🎉 ඔබට 100 LKR එකතු වුණා!");
+  }
+}
+
+function copyReferral() {
+  const link = "https://t.me/ezcash_lk_bot?start=" + userId;
+
+  navigator.clipboard.writeText(link);
+  alert("🔗 Referral link copy වුණා!");
+}
+
+function withdraw() {
+  alert("💸 Withdraw system ඉදිරියේදී එක් කරනු ඇත");
 }
 </script>
 

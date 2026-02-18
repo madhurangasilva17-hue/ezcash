@@ -1,21 +1,58 @@
 const express = require("express");
 const cors = require("cors");
+const fs = require("fs");
 const TelegramBot = require("node-telegram-bot-api");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const TOKEN = "8487781878:AAEkWf8teIZfuTXQW6oLfWIYza_pyjSLS7w"; // 🔴 Put BotFather token here
-const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=100";
+const TOKEN = "PUT_YOUR_BOT_TOKEN_HERE";
+const WEBAPP_URL = "https://madhurangasilva17-hue.github.io/ezcash/?v=200";
 
 const bot = new TelegramBot(TOKEN, { polling: true });
 
-let users = {};
+const DB_FILE = "./database.json";
 
-// Telegram start
-bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Welcome to EzCash 💰", {
+// ---------------- DATABASE ----------------
+
+function loadDB() {
+  if (!fs.existsSync(DB_FILE)) {
+    fs.writeFileSync(DB_FILE, JSON.stringify({ users: {} }, null, 2));
+  }
+  return JSON.parse(fs.readFileSync(DB_FILE));
+}
+
+function saveDB(db) {
+  fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+}
+
+// ---------------- TELEGRAM START ----------------
+
+bot.onText(/\/start(.*)/, (msg, match) => {
+  const chatId = msg.chat.id;
+  const refId = match[1]?.trim();
+
+  const db = loadDB();
+
+  if (!db.users[chatId]) {
+    db.users[chatId] = {
+      balance: 0,
+      ads: 0,
+      referrals: 0
+    };
+
+    // REFERRAL BONUS
+    if (refId && refId !== String(chatId) && db.users[refId]) {
+      db.users[refId].balance += 200;
+      db.users[refId].referrals += 1;
+      db.users[chatId].balance += 150;
+    }
+
+    saveDB(db);
+  }
+
+  bot.sendMessage(chatId, "Welcome to EzCash 💰", {
     reply_markup: {
       inline_keyboard: [[
         { text: "Open EzCash", web_app: { url: WEBAPP_URL } }
@@ -24,29 +61,34 @@ bot.onText(/\/start/, (msg) => {
   });
 });
 
-// Get user data
+// ---------------- GET USER ----------------
+
 app.get("/user/:id", (req, res) => {
   const userId = req.params.id;
+  const db = loadDB();
 
-  if (!users[userId]) {
-    users[userId] = { balance: 0, ads: 0, referrals: 0 };
+  if (!db.users[userId]) {
+    db.users[userId] = { balance: 0, ads: 0, referrals: 0 };
+    saveDB(db);
   }
 
-  res.json(users[userId]);
+  res.json(db.users[userId]);
 });
 
-// AdsGram reward callback
+// ---------------- REWARD ----------------
+
 app.get("/reward", (req, res) => {
   const userId = req.query.userid;
+  const db = loadDB();
 
-  if (!users[userId]) {
-    users[userId] = { balance: 0, ads: 0, referrals: 0 };
+  if (!db.users[userId]) {
+    db.users[userId] = { balance: 0, ads: 0, referrals: 0 };
   }
 
-  users[userId].balance += 100;
-  users[userId].ads += 1;
+  db.users[userId].balance += 100;
+  db.users[userId].ads += 1;
 
-  console.log("Reward added:", userId);
+  saveDB(db);
 
   res.json({ ok: true });
 });

@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EzCash</title>
-
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f6fb;}
-.container{padding:16px;}
-.card{background:#fff;padding:20px;border-radius:16px;margin-bottom:16px;}
-.btn{width:100%;padding:12px;border:none;border-radius:12px;background:#1e88e5;color:#fff;font-weight:bold;cursor:pointer;}
+body{margin:0;font-family:sans-serif;background:#f4f6fb}
+.container{padding:16px}
+.card{background:#fff;padding:20px;border-radius:20px;margin-bottom:16px}
+.amount{font-size:24px;font-weight:bold;color:#1e88e5}
+.btn{width:100%;padding:14px;background:#1e88e5;color:#fff;border:none;border-radius:12px;margin-top:10px;font-weight:600}
 </style>
 </head>
 
@@ -19,22 +19,23 @@ body{margin:0;font-family:Arial;background:#f4f6fb;}
 
 <div class="container">
 
-  <div class="card">
-    <h3 id="username">Welcome</h3>
-  </div>
+<div class="card">
+<h2 id="username">Welcome</h2>
+<p>Total Earnings</p>
+<div class="amount" id="balance">0.00 LKR</div>
+</div>
 
-  <div class="card">
-    <h3>Total Earnings</h3>
-    <div id="balance">0.00 LKR</div>
-  </div>
+<div class="card">
+<p>Referrals</p>
+<div class="amount" id="referrals">0</div>
+<button class="btn" onclick="copyRef()">Copy Referral Link</button>
+</div>
 
-  <div class="card">
-    <button class="btn" onclick="earn()">Watch Ad (+100 LKR)</button>
-  </div>
-
-  <div class="card">
-    <button class="btn" onclick="copyRef()">Copy Referral Link</button>
-  </div>
+<div class="card">
+<p>Daily Ads</p>
+<div id="adsCount">0 / 30</div>
+<button class="btn" onclick="watchAd()">Watch Ad (+100)</button>
+</div>
 
 </div>
 
@@ -43,78 +44,47 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 
 const API_URL = "https://ezcash-1.onrender.com";
-const ADSGRAM_BLOCK_ID = "23197"; // 🔴 Put your real block ID
 
 let user = tg.initDataUnsafe?.user;
-let me = { balance:0 };
-
-// Dynamic AdsGram loader
-(function () {
-  const s = document.createElement("script");
-  s.src = "https://adsgram.ai/sdk.js";
-  s.async = true;
-  s.onload = function () {
-    console.log("AdsGram Loaded");
-  };
-  s.onerror = function () {
-    console.log("AdsGram failed to load");
-  };
-  document.head.appendChild(s);
-})();
-
-window.onload = async function(){
-
-  if(!user){
-    alert("Open inside Telegram");
-    return;
-  }
-
-  document.getElementById("username").innerText =
-    "Welcome, " + user.first_name;
-
-  loadUser();
-};
 
 async function loadUser(){
   const res = await fetch(API_URL + "/user/" + user.id);
-  me = await res.json();
+  const data = await res.json();
+
   document.getElementById("balance").innerText =
-    me.balance.toFixed(2) + " LKR";
+    data.balance.toFixed(2) + " LKR";
+
+  document.getElementById("referrals").innerText =
+    data.referrals;
+
+  document.getElementById("adsCount").innerText =
+    data.ads + " / 30";
 }
 
-async function earn(){
+async function watchAd(){
 
-  if((me.ads || 0) >= 30){
-    alert("Daily limit reached");
-    return;
-  }
+  window.open("https://www.effectivegatecpm.com/axeeyqg3tf?key=b80fe1d68675c8ba9e9127836a0c430b");
 
-  const adUrl = "https://www.effectivegatecpm.com/axeeyqg3tf?key=b80fe1d68675c8ba9e9127836a0c430b";
-
-  // Open the Smartlink ad
-  window.open(adUrl, "_blank");
-
-  // Reward after 15 seconds
-  setTimeout(async () => {
-
-    try {
-      await fetch(API_URL + "/reward?userid=" + user.id);
-      await loadUser();
-      alert("Reward Added ✅");
-    } catch(e) {
-      alert("Reward error ❌");
-    }
-
-  }, 15000); // wait 15 seconds
+  setTimeout(async ()=>{
+    await fetch(API_URL + "/reward?userid=" + user.id);
+    await loadUser();
+  }, 15000);
 }
 
 function copyRef(){
   const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
-
-  navigator.clipboard.writeText(link)
-    .then(()=> alert("Copied ✅"))
-    .catch(()=> alert(link));
+  navigator.clipboard.writeText(link);
+  alert("Copied ✅");
 }
+
+document.getElementById("username").innerText =
+  "Welcome, " + user.first_name;
+
+loadUser();
+
+// 🔥 AUTO LIVE UPDATE EVERY 5 SECONDS
+setInterval(loadUser, 5000);
+
 </script>
 
 </body>

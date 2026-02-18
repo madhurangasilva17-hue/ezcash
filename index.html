@@ -19,7 +19,6 @@ body{
   padding-bottom:90px;
 }
 
-/* HEADER CARD */
 .header{
   background:#dfeaf6;
   padding:20px;
@@ -27,18 +26,6 @@ body{
   margin-bottom:18px;
 }
 
-.header h2{
-  margin:0;
-  font-size:20px;
-}
-
-.header p{
-  margin-top:5px;
-  font-size:14px;
-  color:#555;
-}
-
-/* SMALL CARDS */
 .row{
   display:flex;
   gap:14px;
@@ -53,11 +40,6 @@ body{
   box-shadow:0 6px 18px rgba(0,0,0,0.05);
 }
 
-.card-small span{
-  font-size:13px;
-  color:#777;
-}
-
 .amount{
   font-size:20px;
   font-weight:700;
@@ -67,7 +49,6 @@ body{
 .blue{ color:#1976d2; }
 .green{ color:#2e7d32; }
 
-/* BIG CARD */
 .card{
   background:white;
   padding:18px;
@@ -76,18 +57,6 @@ body{
   margin-bottom:18px;
 }
 
-.card h3{
-  margin:0;
-  font-size:17px;
-}
-
-.card p{
-  margin-top:5px;
-  font-size:13px;
-  color:#666;
-}
-
-/* PROGRESS */
 .progress{
   height:8px;
   background:#e0e0e0;
@@ -103,7 +72,6 @@ body{
   transition:0.3s;
 }
 
-/* BUTTON */
 .btn{
   width:100%;
   padding:12px;
@@ -116,16 +84,6 @@ body{
   cursor:pointer;
 }
 
-/* REF BOX */
-.ref-box{
-  background:#f2f4f8;
-  padding:12px;
-  border-radius:14px;
-  margin-top:10px;
-  font-size:14px;
-}
-
-/* BOTTOM NAV */
 .bottom-nav{
   position:fixed;
   bottom:0;
@@ -136,12 +94,10 @@ body{
   padding:12px 0;
   box-shadow:0 -3px 15px rgba(0,0,0,0.08);
 }
-
 .nav-item{
   font-size:12px;
   color:#777;
 }
-
 .nav-item.active{
   color:#1976d2;
   font-weight:600;
@@ -170,7 +126,6 @@ body{
     </div>
   </div>
 
-  <!-- DAILY -->
   <div class="card">
     <h3>Daily Progress</h3>
     <p>You can complete 30 ads today</p>
@@ -182,16 +137,6 @@ body{
     <p id="progressText">0 / 30 completed</p>
 
     <button class="btn" onclick="watchAd()">Watch Ad (+100 LKR)</button>
-  </div>
-
-  <!-- REF -->
-  <div class="card">
-    <h3>Refer & Earn</h3>
-
-    <div class="ref-box">Friends get 150 LKR bonus</div>
-    <div class="ref-box">You earn 200 LKR per referral</div>
-
-    <button class="btn" onclick="copyRef()">Copy Referral Link</button>
   </div>
 
 </div>
@@ -207,10 +152,11 @@ body{
 const tg = window.Telegram.WebApp;
 tg.expand();
 
-const API_URL = "https://YOUR-RENDER-URL.onrender.com";
+const API_URL = "https://https://ezcash-1.onrender.com"; // 🔥 change this
 
 let user = tg.initDataUnsafe?.user;
 let me = { balance:0, ads:0, referrals:0 };
+let adOpened = false;
 
 document.addEventListener("DOMContentLoaded", async () => {
 
@@ -225,30 +171,26 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadUser();
 });
 
-/* LOAD USER */
 async function loadUser(){
   const res = await fetch(API_URL + "/user/" + user.id);
   me = await res.json();
   updateUI();
 }
 
-/* UPDATE UI */
 function updateUI(){
-
   document.getElementById("balance").innerText =
-    me.balance.toFixed(2) + " LKR";
+    (me.balance || 0).toFixed(2) + " LKR";
 
   document.getElementById("referrals").innerText =
-    me.referrals;
+    me.referrals || 0;
 
   document.getElementById("progBar").style.width =
-    (me.ads / 30 * 100) + "%";
+    ((me.ads || 0) / 30 * 100) + "%";
 
   document.getElementById("progressText").innerText =
-    me.ads + " / 30 completed";
+    (me.ads || 0) + " / 30 completed";
 }
 
-/* WATCH AD */
 async function watchAd(){
 
   if(me.ads >= 30){
@@ -256,27 +198,30 @@ async function watchAd(){
     return;
   }
 
-  // simulate ad open
+  // Open Ad
   window.open("https://www.google.com", "_blank");
 
-  // reward after 3 sec
+  // Wait 10 seconds then reward
   setTimeout(async () => {
 
-    const res = await fetch(API_URL + "/reward?userid=" + user.id);
-    const data = await res.json();
+    try {
 
-    await loadUser();
+      const res = await fetch(API_URL + "/reward?userid=" + user.id);
 
-  }, 3000);
-}
+      if(!res.ok){
+        alert("Server error");
+        return;
+      }
 
-/* COPY REF */
-function copyRef(){
-  const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
+      await loadUser();
 
-  navigator.clipboard.writeText(link)
-    .then(()=> alert("Referral link copied ✅"))
-    .catch(()=> alert(link));
+      alert("Reward Added ✅");
+
+    } catch(e){
+      alert("Network error");
+    }
+
+  }, 10000);
 }
 </script>
 

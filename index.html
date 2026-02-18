@@ -208,15 +208,25 @@ function updateUI(){
 }
 
 async function earn(){
-  alert("Button clicked");
-}
 
-function copyRef(){
-  const link = "https://t.me/ezcash_lk_bot?start=" + user.id;
+  if (!window.Adsgram) {
+    alert("AdsGram not loaded");
+    return;
+  }
 
-  navigator.clipboard.writeText(link)
-    .then(()=> alert("Referral link copied ✅"))
-    .catch(()=> alert(link));
+  try {
+
+    await window.Adsgram.showRewarded({
+      blockId: ADSGRAM_BLOCK_ID,
+      userId: String(user.id)
+    });
+
+    // Reward callback hits backend
+    setTimeout(loadUser, 2000);
+
+  } catch(e){
+    alert("Ad not completed");
+  }
 }
 </script>
 

@@ -9,57 +9,72 @@
 <style>
 body{
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#f4f6fb;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background:#f5f7fb;
 }
 
-.header{
-  background:#dbe7f3;
+.container{
+  padding:15px;
+}
+
+.welcome-box{
+  background:#d9e6f2;
   padding:20px;
-  border-radius:0 0 25px 25px;
+  border-radius:20px;
+  margin-bottom:15px;
 }
 
-.header h2{
+.welcome-box h2{
   margin:0;
+  font-size:20px;
 }
 
-.cards{
+.card-row{
   display:flex;
   gap:10px;
-  margin:15px;
+  margin-bottom:15px;
 }
 
-.card{
+.small-card{
   flex:1;
   background:white;
-  padding:15px;
-  border-radius:15px;
-  box-shadow:0 3px 8px rgba(0,0,0,0.08);
+  padding:18px;
+  border-radius:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
 }
 
-.big-card{
-  background:white;
-  margin:15px;
-  padding:15px;
-  border-radius:15px;
-  box-shadow:0 3px 8px rgba(0,0,0,0.08);
+.small-card h4{
+  margin:0;
+  font-size:14px;
+  color:#777;
 }
 
 .amount{
   font-size:22px;
   font-weight:bold;
-  color:#2196f3;
+  margin-top:8px;
+}
+
+.blue{ color:#2196f3; }
+.green{ color:#28a745; }
+
+.big-card{
+  background:white;
+  padding:18px;
+  border-radius:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  margin-bottom:15px;
 }
 
 .progress-bar{
-  height:8px;
-  background:#ddd;
+  height:6px;
+  background:#e0e0e0;
   border-radius:10px;
-  margin-top:10px;
+  margin:10px 0;
 }
 
 .progress-fill{
-  height:8px;
+  height:6px;
   background:#2196f3;
   border-radius:10px;
   width:0%;
@@ -68,15 +83,30 @@ body{
 .btn{
   width:100%;
   padding:12px;
-  margin-top:10px;
   border:none;
-  border-radius:10px;
+  border-radius:12px;
+  background:#2196f3;
+  color:white;
   font-weight:bold;
+  margin-top:10px;
   cursor:pointer;
 }
 
-.blue{background:#2196f3;color:white;}
-.green{background:#4caf50;color:white;}
+.ref-card{
+  background:white;
+  padding:18px;
+  border-radius:18px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.ref-badge{
+  background:#e3f2fd;
+  color:#2196f3;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  float:right;
+}
 
 .bottom-nav{
   position:fixed;
@@ -91,8 +121,8 @@ body{
 
 .nav-item{
   font-size:12px;
-  color:#555;
   text-align:center;
+  color:#555;
 }
 
 .nav-item.active{
@@ -104,37 +134,45 @@ body{
 
 <body>
 
-<div class="header">
-  <h2 id="username">සාදරයෙන් පිළිගනිමු 👋</h2>
-  <p>කාර්යයන් සම්පූර්ණ කර මුදල් උපයන්න</p>
-</div>
+<div class="container">
 
-<div class="cards">
-  <div class="card">
-    <div>මුළු උපයාගත් මුදල</div>
-    <div class="amount" id="balance">0.00 LKR</div>
+  <div class="welcome-box">
+    <h2 id="username">සාදරයෙන් පිළිගනිමු 👋</h2>
+    <p>කාර්යයන් සම්පූර්ණ කර මුදල් උපයන්න</p>
   </div>
 
-  <div class="card">
-    <div>මිතුරන්</div>
-    <div class="amount" id="referrals">0</div>
-  </div>
-</div>
+  <div class="card-row">
+    <div class="small-card">
+      <h4>මුළු උපයාගත් මුදල</h4>
+      <div class="amount blue" id="balance">0.00 LKR</div>
+    </div>
 
-<div class="big-card">
-  <h3>📊 දිනපතා ප්‍රගතිය</h3>
-  <p>අද දැන්වීම් 30ක් සම්පූර්ණ කළ හැක</p>
-  <div class="progress-bar">
-    <div class="progress-fill" id="progress"></div>
+    <div class="small-card">
+      <h4>මිතුරන්</h4>
+      <div class="amount green" id="referrals">0</div>
+    </div>
   </div>
-  <p id="progressText">0 / 30 සම්පූර්ණයි</p>
-  <button class="btn green" onclick="watchAd()">දැන්වීම බලන්න (+100 LKR)</button>
-</div>
 
-<div class="big-card">
-  <h3>👥 මිතුරන්ට ආරාධනා කරන්න</h3>
-  <p>එක් මිතුරෙකුට 200 LKR</p>
-  <button class="btn blue" onclick="copyReferral()">Referral Link Copy කරන්න</button>
+  <div class="big-card">
+    <h3>දිනපතා ප්‍රගතිය</h3>
+    <p>අද දැන්වීම් 30ක් සම්පූර්ණ කළ හැක</p>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress"></div>
+    </div>
+
+    <p id="progressText">0 / 30 සම්පූර්ණයි</p>
+
+    <button class="btn" onclick="watchAd()">දැන්වීම බලන්න</button>
+  </div>
+
+  <div class="ref-card">
+    <span class="ref-badge">200 LKR / මිතුරෙකු</span>
+    <h3>මිතුරන්ට ආරාධනා කරන්න</h3>
+    <p>ඔබට එක් මිතුරෙකුට 200 LKR ලැබේ</p>
+    <button class="btn" onclick="copyReferral()">Referral Link Copy කරන්න</button>
+  </div>
+
 </div>
 
 <div style="height:80px"></div>
@@ -155,16 +193,15 @@ const userId = user?.id;
 
 if(user){
   document.getElementById("username").innerText =
-    user.first_name + " වෙත සාදරයෙන් පිළිගනිමු 👋";
+    "ආයුබෝවන් " + user.first_name + " 👋";
 }
 
 let balance = 0;
 let adsToday = 0;
-let referrals = 0;
 
-async function watchAd(){
+function watchAd(){
   if(adsToday >= 30){
-    alert("අද සඳහා දැන්වීම් සීමාව සම්පූර්ණයි");
+    alert("අද සීමාව සම්පූර්ණයි");
     return;
   }
 
@@ -172,7 +209,8 @@ async function watchAd(){
   balance += 100;
 
   document.getElementById("balance").innerText = balance + " LKR";
-  document.getElementById("progress").style.width = (adsToday/30*100)+"%";
+  document.getElementById("progress").style.width =
+    (adsToday/30*100)+"%";
   document.getElementById("progressText").innerText =
     adsToday + " / 30 සම්පූර්ණයි";
 }

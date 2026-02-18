@@ -220,62 +220,66 @@ body{
 const tg = window.Telegram.WebApp;
 tg.expand();
 
+const API_URL = "https://ezcash.onrender.com";
+
 let user = tg.initDataUnsafe?.user || null;
-let ads = 0;
-let balance = 0;
+let me = { balance:0, ads:0 };
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-  if(user){
-    document.getElementById("username").innerText =
-      "Welcome Back, " + user.first_name + " 👋";
-  }
+  if(!user) return;
 
-  const watchBtn = document.getElementById("watchBtn");
+  document.getElementById("username").innerText =
+    "Welcome Back, " + user.first_name + " 👋";
 
-  if(watchBtn){
-    watchBtn.addEventListener("click", earn);
-  }
+  await loadUser();
+
+  document.getElementById("watchBtn")
+    .addEventListener("click", earn);
 
 });
 
-function earn(){
+async function loadUser(){
 
-  if(ads >= 30){
+  const res = await fetch(API_URL + "/user/" + user.id);
+  me = await res.json();
+
+  document.getElementById("balance").innerText =
+    me.balance.toFixed(2) + " LKR";
+
+  updateProgress();
+
+}
+
+function updateProgress(){
+  document.getElementById("progBar").style.width =
+    (me.ads/30*100) + "%";
+
+  document.getElementById("progressText").innerText =
+    me.ads + " / 30 completed";
+}
+
+async function earn(){
+
+  if(me.ads >= 30){
     alert("Daily limit reached");
     return;
   }
 
-  ads++;
-  balance += 100;
+  const res = await fetch(API_URL + "/watch-ad",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ userId: user.id })
+  });
+
+  me = await res.json();
 
   document.getElementById("balance").innerText =
-    balance.toFixed(2) + " LKR";
+    me.balance.toFixed(2) + " LKR";
 
-  document.getElementById("progBar").style.width =
-    (ads/30*100) + "%";
-
-  document.getElementById("progressText").innerText =
-    ads + " / 30 completed";
-
+  updateProgress();
 }
 
-function copyRef(){
-
-  if(!user){
-    alert("Open inside Telegram");
-    return;
-  }
-
-  const link =
-    "https://t.me/ezcash_lk_bot?start=" + user.id;
-
-  tg.openTelegramLink(
-    "https://t.me/share/url?url=" +
-    encodeURIComponent(link)
-  );
-
-}
 </script>
 
 
